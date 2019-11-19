@@ -10,11 +10,7 @@ export default function Header({ navigation }) {
       <Content>
         <Logo />
 
-        <CartContainer
-          onPress={() => {
-            navigation.navigate('Cart');
-          }}
-        >
+        <CartContainer onPress={() => navigation.navigate('Cart')}>
           <Icon name="shopping-basket" size={30} color="#FFF" />
           <CartCount>3</CartCount>
         </CartContainer>

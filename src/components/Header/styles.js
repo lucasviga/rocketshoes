@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import { RectButton } from 'react-native-gesture-handler';
 import logo from '../../assets/logo.png';
 
 export const Container = styled.SafeAreaView`
@@ -22,7 +23,7 @@ export const Logo = styled.Image.attrs({
   height: 25px;
 `;
 
-export const CartContainer = styled.TouchableOpacity`
+export const CartContainer = styled(RectButton)`
   width: 24px;
   height: 24px;
   flex: 1;

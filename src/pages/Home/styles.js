@@ -50,6 +50,8 @@ export const CartAmount = styled.View`
   flex-direction: row;
   background: ${darken(0.1, '#7159c1')};
   padding: 12px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
 `;
 
 export const AddCartText = styled.Text`

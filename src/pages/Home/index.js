@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import {
@@ -14,7 +15,7 @@ import {
   CartAmountText,
 } from './styles';
 
-function Home() {
+export default function Home({ navigation }) {
   return (
     <Container>
       <List>
@@ -29,7 +30,7 @@ function Home() {
 
           <Price>R$ 129,90</Price>
 
-          <AddCartButton>
+          <AddCartButton onPress={() => navigation.navigate('Cart')}>
             <CartAmount>
               <Icon name="add-shopping-cart" size={20} color="#FFF" />
               <CartAmountText>3</CartAmountText>
@@ -64,4 +65,8 @@ function Home() {
   );
 }
 
-export default Home;
+Home.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};
