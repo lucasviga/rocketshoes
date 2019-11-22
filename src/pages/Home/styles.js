@@ -6,7 +6,7 @@ export const Container = styled.View`
   background: #191920;
 `;
 
-export const List = styled.ScrollView.attrs({
+export const List = styled.FlatList.attrs({
   horizontal: true,
   showsHorizontalScrollIndicator: false,
 })`
@@ -61,4 +61,14 @@ export const AddCartText = styled.Text`
 
 export const CartAmountText = styled.Text`
   color: #fff;
+`;
+
+export const Loading = styled.ActivityIndicator.attrs({
+  color: '#fff',
+  size: 50,
+})`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
 `;

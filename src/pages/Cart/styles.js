@@ -10,13 +10,12 @@ export const Container = styled.View`
 
 export const Products = styled.View`
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
 `;
 
+export const Product = styled.View``;
+
 export const ProductInfo = styled.View`
-  display: flex;
   flex-direction: row;
   align-items: center;
 `;
@@ -27,17 +26,15 @@ export const ImageProduct = styled.Image`
 `;
 
 export const InfoProduct = styled.View`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-left: 8px;
+  flex: 1;
+  padding: 10px;
 `;
 export const TitleProduct = styled.Text`
-  font-size: 15px;
+  font-size: 14px;
 `;
 
 export const PriceProduct = styled.Text`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
 `;
 
@@ -53,11 +50,15 @@ export const Amount = styled.View`
 `;
 
 export const ValueAmount = styled.TextInput.attrs({
-  disableFullscreenUI: true,
+  readonly: true,
 })``;
 
 export const AddCart = styled(RectButton)``;
+
 export const RemoveCart = styled(RectButton)``;
+
+export const RemoveAmount = styled(RectButton)``;
+
 export const PriceAmount = styled.Text`
   font-weight: bold;
   font-size: 18px;

@@ -1,6 +1,14 @@
-import React from 'react';
+/* eslint-disable react/state-in-constructor */
+/* eslint-disable react/static-property-placement */
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import api from '../../services/api';
+
+import * as CartActions from '../../store/modules/cart/actions';
 
 import {
   Container,
@@ -13,60 +21,82 @@ import {
   AddCartText,
   CartAmount,
   CartAmountText,
+  Loading,
 } from './styles';
 
-export default function Home({ navigation }) {
-  return (
-    <Container>
-      <List>
-        <Product>
-          <ImageProduct
-            source={{
-              uri:
-                'https://static.netshoes.com.br/produtos/chuteira-campo-nike-bravata-2-fg/06/D12-2777-006/D12-2777-006_detalhe1.jpg?ims=326x',
-            }}
+class Home extends Component {
+  static propTypes = {
+    addToCartRequest: PropTypes.func.isRequired,
+  };
+
+  state = {
+    products: [],
+    loading: false,
+  };
+
+  async componentDidMount() {
+    try {
+      this.setState({ loading: true });
+      const response = await api.get('/products');
+
+      this.setState({
+        products: response.data,
+        loading: false,
+      });
+    } catch (error) {
+      console.tron.log('erro', error);
+    }
+  }
+
+  handleAddProduct = id => {
+    const { addToCartRequest } = this.props;
+
+    addToCartRequest(id);
+  };
+
+  render() {
+    const { products, loading } = this.state;
+    const { amount } = this.props;
+    return (
+      <Container>
+        {loading ? (
+          <Loading />
+        ) : (
+          <List
+            data={products}
+            keyExtractor={product => String(product.id)}
+            renderItem={({ item }) => (
+              <Product>
+                <ImageProduct source={{ uri: item.image }} />
+                <Title>{item.title}</Title>
+
+                <Price>{item.price}</Price>
+
+                <AddCartButton onPress={() => this.handleAddProduct(item.id)}>
+                  <CartAmount>
+                    <Icon name="add-shopping-cart" size={20} color="#FFF" />
+                    <CartAmountText>{amount[item.id] || 0}</CartAmountText>
+                  </CartAmount>
+
+                  <AddCartText>ADICIONAR</AddCartText>
+                </AddCartButton>
+              </Product>
+            )}
           />
-          <Title>Chuteria Nike 7.0</Title>
-
-          <Price>R$ 129,90</Price>
-
-          <AddCartButton onPress={() => navigation.navigate('Cart')}>
-            <CartAmount>
-              <Icon name="add-shopping-cart" size={20} color="#FFF" />
-              <CartAmountText>3</CartAmountText>
-            </CartAmount>
-
-            <AddCartText>ADICIONAR</AddCartText>
-          </AddCartButton>
-        </Product>
-
-        <Product>
-          <ImageProduct
-            source={{
-              uri:
-                'https://static.netshoes.com.br/produtos/chuteira-campo-nike-bravata-2-fg/06/D12-2777-006/D12-2777-006_detalhe1.jpg?ims=326x',
-            }}
-          />
-          <Title>Chuteria Nike 7.0</Title>
-
-          <Price>R$ 129,90</Price>
-
-          <AddCartButton>
-            <CartAmount>
-              <Icon name="add-shopping-cart" size={20} color="#FFF" />
-              <CartAmountText>3</CartAmountText>
-            </CartAmount>
-
-            <AddCartText>ADICIONAR</AddCartText>
-          </AddCartButton>
-        </Product>
-      </List>
-    </Container>
-  );
+        )}
+      </Container>
+    );
+  }
 }
 
-Home.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func,
-  }).isRequired,
-};
+const mapStateToProps = state => ({
+  amount: state.cart.reduce((amount, product) => {
+    amount[product.id] = product.amount;
+    return amount;
+  }, {}),
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(CartActions, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
