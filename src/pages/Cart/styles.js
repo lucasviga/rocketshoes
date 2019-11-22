@@ -40,29 +40,36 @@ export const PriceProduct = styled.Text`
 
 export const Amount = styled.View`
   background: #eee;
-  display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   border-radius: 4px;
   padding: 5px;
-  margin-top: 5px;
 `;
+
+export const Controls = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const QtndControls = styled(RectButton)``;
 
 export const ValueAmount = styled.TextInput.attrs({
   readonly: true,
-})``;
-
-export const AddCart = styled(RectButton)``;
-
-export const RemoveCart = styled(RectButton)``;
-
-export const RemoveAmount = styled(RectButton)``;
+})`
+  background: #fff;
+  padding: 5px;
+  min-width: 50px;
+  margin: 0 5px;
+  border-radius: 3px;
+`;
 
 export const PriceAmount = styled.Text`
   font-weight: bold;
   font-size: 18px;
 `;
+
+export const RemoveCart = styled(RectButton)``;
 
 export const Total = styled.View`
   margin: 20px auto;

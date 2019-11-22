@@ -1,9 +1,5 @@
-/* eslint-disable react/state-in-constructor */
-/* eslint-disable react/static-property-placement */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import api from '../../services/api';
@@ -24,79 +20,65 @@ import {
   Loading,
 } from './styles';
 
-class Home extends Component {
-  static propTypes = {
-    addToCartRequest: PropTypes.func.isRequired,
-  };
+export default function Home() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  state = {
-    products: [],
-    loading: false,
-  };
+  const amount = useSelector(state =>
+    state.cart.reduce((TotalAmount, product) => {
+      TotalAmount[product.id] = product.amount;
+      return TotalAmount;
+    }, {})
+  );
 
-  async componentDidMount() {
-    try {
-      this.setState({ loading: true });
-      const response = await api.get('/products');
+  const dispatch = useDispatch();
 
-      this.setState({
-        products: response.data,
-        loading: false,
-      });
-    } catch (error) {
-      console.tron.log('erro', error);
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        setLoading(true);
+        const response = await api.get('/products');
+
+        setProducts(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.tron.log('erro', error);
+      }
     }
+    loadProducts();
+  }, []);
+
+  function handleAddProduct(id) {
+    dispatch(CartActions.addToCartRequest(id));
   }
 
-  handleAddProduct = id => {
-    const { addToCartRequest } = this.props;
+  return (
+    <Container>
+      {loading ? (
+        <Loading />
+      ) : (
+        <List
+          data={products}
+          keyExtractor={product => String(product.id)}
+          renderItem={({ item }) => (
+            <Product>
+              <ImageProduct source={{ uri: item.image }} />
+              <Title>{item.title}</Title>
 
-    addToCartRequest(id);
-  };
+              <Price>{item.price}</Price>
 
-  render() {
-    const { products, loading } = this.state;
-    const { amount } = this.props;
-    return (
-      <Container>
-        {loading ? (
-          <Loading />
-        ) : (
-          <List
-            data={products}
-            keyExtractor={product => String(product.id)}
-            renderItem={({ item }) => (
-              <Product>
-                <ImageProduct source={{ uri: item.image }} />
-                <Title>{item.title}</Title>
+              <AddCartButton onPress={() => handleAddProduct(item.id)}>
+                <CartAmount>
+                  <Icon name="add-shopping-cart" size={20} color="#FFF" />
+                  <CartAmountText>{amount[item.id] || 0}</CartAmountText>
+                </CartAmount>
 
-                <Price>{item.price}</Price>
-
-                <AddCartButton onPress={() => this.handleAddProduct(item.id)}>
-                  <CartAmount>
-                    <Icon name="add-shopping-cart" size={20} color="#FFF" />
-                    <CartAmountText>{amount[item.id] || 0}</CartAmountText>
-                  </CartAmount>
-
-                  <AddCartText>ADICIONAR</AddCartText>
-                </AddCartButton>
-              </Product>
-            )}
-          />
-        )}
-      </Container>
-    );
-  }
+                <AddCartText>ADICIONAR</AddCartText>
+              </AddCartButton>
+            </Product>
+          )}
+        />
+      )}
+    </Container>
+  );
 }
-
-const mapStateToProps = state => ({
-  amount: state.cart.reduce((amount, product) => {
-    amount[product.id] = product.amount;
-    return amount;
-  }, {}),
-});
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(CartActions, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);

@@ -18,7 +18,7 @@ export const Product = styled.View`
   border-radius: 4px;
   background: #fff;
   padding: 10px;
-  margin: 0 15px;
+  margin: 15px;
 `;
 
 export const ImageProduct = styled.Image`
@@ -43,11 +43,12 @@ export const AddCartButton = styled(RectButton)`
   align-items: center;
   background: #7159c1;
   border-radius: 4px;
+  margin-top: auto;
 `;
 
 export const CartAmount = styled.View`
-  display: flex;
   flex-direction: row;
+  align-items: center;
   background: ${darken(0.1, '#7159c1')};
   padding: 12px;
   border-top-left-radius: 4px;
@@ -55,7 +56,9 @@ export const CartAmount = styled.View`
 `;
 
 export const AddCartText = styled.Text`
-  margin: 0 auto;
+  flex: 1;
+  font-weight: bold;
+  text-align: center;
   color: #fff;
 `;
 

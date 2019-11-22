@@ -1,11 +1,9 @@
 /* eslint-disable react/static-property-placement */
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import * as CartActios from '../../store/modules/cart/actions';
+import * as CartActions from '../../store/modules/cart/actions';
 
 import {
   Container,
@@ -18,9 +16,9 @@ import {
   PriceProduct,
   Amount,
   ValueAmount,
-  AddCart,
+  Controls,
+  QtndControls,
   RemoveCart,
-  RemoveAmount,
   PriceAmount,
   Total,
   TotalText,
@@ -29,13 +27,28 @@ import {
   FinishButtonText,
 } from './styles';
 
-function Cart({ cart, removeFromCart, updateAmountRequest, total }) {
+function Cart() {
+  const cart = useSelector(state =>
+    state.cart.map(product => ({
+      ...product,
+      subtotal: product.price * product.amount,
+    }))
+  );
+
+  const total = useSelector(state =>
+    state.cart.reduce((totalSum, product) => {
+      return totalSum + product.price * product.amount;
+    }, 0)
+  );
+
+  const dispatch = useDispatch();
+
   function increment(product) {
-    updateAmountRequest(product.id, product.amount + 1);
+    dispatch(CartActions.updateAmountRequest(product.id, product.amount + 1));
   }
 
   function decrement(product) {
-    updateAmountRequest(product.id, product.amount - 1);
+    dispatch(CartActions.updateAmountRequest(product.id, product.amount - 1));
   }
 
   return (
@@ -53,23 +66,33 @@ function Cart({ cart, removeFromCart, updateAmountRequest, total }) {
                     <PriceProduct>R$ {product.price}</PriceProduct>
                   </InfoProduct>
 
-                  <RemoveCart onPress={() => removeFromCart(product.id)}>
+                  <RemoveCart
+                    onPress={() =>
+                      dispatch(CartActions.removeFromCart(product.id))
+                    }
+                  >
                     <Icon name="delete-forever" size={25} color="#7159c1" />
                   </RemoveCart>
                 </ProductInfo>
 
                 <Amount>
-                  <RemoveAmount onPress={() => decrement(product)}>
-                    <Icon
-                      name="remove-circle-outline"
-                      size={15}
-                      color="#7159c1"
-                    />
-                  </RemoveAmount>
-                  <ValueAmount value={String(product.amount)} />
-                  <AddCart onPress={() => increment(product)}>
-                    <Icon name="add-circle-outline" size={15} color="#7159c1" />
-                  </AddCart>
+                  <Controls>
+                    <QtndControls onPress={() => decrement(product)}>
+                      <Icon
+                        name="remove-circle-outline"
+                        size={15}
+                        color="#7159c1"
+                      />
+                    </QtndControls>
+                    <ValueAmount value={String(product.amount)} />
+                    <QtndControls onPress={() => increment(product)}>
+                      <Icon
+                        name="add-circle-outline"
+                        size={15}
+                        color="#7159c1"
+                      />
+                    </QtndControls>
+                  </Controls>
 
                   <PriceAmount>R$ {product.subtotal}</PriceAmount>
                 </Amount>
@@ -93,20 +116,4 @@ function Cart({ cart, removeFromCart, updateAmountRequest, total }) {
   );
 }
 
-const mapStateToProps = state => ({
-  cart: state.cart.map(product => ({
-    ...product,
-    subtotal: product.price * product.amount,
-  })),
-  total: state.cart.reduce((total, product) => {
-    return total + product.price * product.amount;
-  }, 0),
-});
-
-const mapDispatchToProps = dispatch => bindActionCreators(CartActios, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(Cart);
-
-Cart.propTypes = {
-  removeFromCart: PropTypes.func.isRequired,
-};
+export default Cart;
