@@ -11,7 +11,7 @@
     "db": "json-server server.json -p 3333 -w"
   },
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "immer": "^5.0.0",
     "polished": "^3.4.2",
     "prop-types": "^15.7.2",
